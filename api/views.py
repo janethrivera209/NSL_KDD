@@ -2,9 +2,13 @@
 import os
 from django.http import JsonResponse, Http404
 from django.shortcuts import render
+from pathlib import Path
 
-# Ruta de los archivos ARFF
-ARFF_DIR = "/home/janeth/DataSet/datasets/datasets/NSL-KDD/"
+# Definimos la base del proyecto
+BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Ruta de los archivos ARFF dentro del proyecto
+ARFF_DIR = os.path.join(BASE_DIR, "arffs")  # <-- asegúrate de que la carpeta se llame "arffs" y esté en el proyecto
 
 def listar_archivos(request):
     """Lista todos los archivos .arff en la carpeta"""

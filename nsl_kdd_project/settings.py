@@ -13,7 +13,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ===========================
 SECRET_KEY = 'tu-secret-key-aqui'
 DEBUG = True
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['nsl-kdd.onrender.com']
+
 
 # ===========================
 # APPS INSTALADAS
@@ -46,7 +47,7 @@ ROOT_URLCONF = 'nsl_kdd_project.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],  # <- tu carpeta templates
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -58,7 +59,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'nsl_kdd_project.wsgi.application'
 
 # ===========================

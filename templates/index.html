@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NSL-KDD</title>
+<style>
+/* General */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(to bottom right, #e0f7fa, #fff);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Contenedor principal */
+.container {
+    width: 95%;
+    max-width: 1200px;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffffcc;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+/* Título */
+h2 {
+    color: #00796b;
+    text-align: center;
+}
+
+/* Select y botón */
+label {
+    font-weight: bold;
+    margin-right: 10px;
+}
+select, button {
+    padding: 8px 12px;
+    margin: 5px 0;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+button {
+    cursor: pointer;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    transition: background-color 0.3s;
+}
+button:hover {
+    background-color: #004d40;
+}
+
+/* Tabla */
+table {
+    border-collapse: collapse;
+    width: 100%;
+    margin-top: 20px;
+    overflow-x: auto;
+}
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+    font-size: 0.95rem;
+}
+th {
+    background-color: #00796b;
+    color: white;
+}
+tbody tr:nth-child(even) {
+    background-color: #f1f1f1;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    select, button {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+    table {
+        font-size: 0.8rem;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>NSL-KDD Dataset</h2>
+
+    <div class="controls">
+        <label>Archivo ARFF:</label>
+        <select id="archivo"></select>
+        <button onclick="cargar()">Cargar</button>
+    </div>
+
+    <table id="tabla">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script>
+// Cargar la lista de archivos al iniciar
+async function cargarArchivos() {
+    const res = await fetch('/archivos/');
+    const data = await res.json();
+    const select = document.getElementById("archivo");
+    select.innerHTML = "";
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+    data.archivos.forEach(f => {
+        const opt = document.createElement("option");
+        opt.value = f;
+        opt.textContent = f;
+        select.appendChild(opt);
+    });
+}
+
+// Cargar datos del archivo seleccionado
+async function cargar() {
+    const archivo = document.getElementById("archivo").value;
+    const res = await fetch(`/archivo/${archivo}/`);
+    const data = await res.json();
+
+    if (data.error) {
+        alert(data.error);
+        return;
+    }
+
+    const dataset = data.data;
+    const attributes = data.attributes;
+
+    if (!dataset || dataset.length === 0) {
+        alert("No hay datos para mostrar");
+        return;
+    }
+
+    // Cabecera de la tabla
+    const thead = document.querySelector("#tabla thead");
+    thead.innerHTML = "";
+    const trHead = document.createElement("tr");
+    attributes.forEach(attr => {
+        const th = document.createElement("th");
+        th.textContent = attr[0]; // nombre del atributo
+        trHead.appendChild(th);
+    });
+    thead.appendChild(trHead);
+
+    // Cuerpo de la tabla
+    const tbody = document.querySelector("#tabla tbody");
+    tbody.innerHTML = "";
+    dataset.forEach(row => {
+        const tr = document.createElement("tr");
+        row.forEach(val => {
+            const td = document.createElement("td");
+            td.textContent = val;
+            tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+    });
+}
+
+// Inicializa la lista de archivos
+cargarArchivos();
+</script>
+
+</body>
+</html>
+
+
